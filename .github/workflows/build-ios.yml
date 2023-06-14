@@ -1,0 +1,56 @@
+name: IOS Development Build
+
+on:
+  workflow_call:
+    secrets:
+      EXPO_TOKEN:
+        required: true
+
+# [need build] is a keyword that will trigger the build
+jobs:
+  check:
+    name: Check if build is needed
+    runs-on: ubuntu-latest
+    outputs:
+      last_commit: ${{ steps.git.outputs.LAST_COMMIT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get last commit
+        id: git
+        shell: bash
+        run: |
+          message=$( git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
+          echo 'LAST_COMMIT<<EOF' >> $GITHUB_OUTPUT
+          echo "$message" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+          echo "$message"
+
+  build:
+    name: Build on EAS
+    needs: check
+    runs-on: ubuntu-latest
+    if: ${{ contains(needs.check.outputs.last_commit, '[need build]') }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build on EAS
+        run: eas build -e development --platform ios --non-interactive
