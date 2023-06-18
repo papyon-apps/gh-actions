@@ -24,7 +24,7 @@ on:
     branches:
       - dev
 
-jobs:e
+jobs:
   call-workflow:
     name: Call Preview Workflow
     uses: papyon-apps/gh-actions/.github/workflows/preview.yml@main
