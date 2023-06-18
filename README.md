@@ -61,7 +61,7 @@ jobs:
 
 ### Build IOS development client for testing (Optional)
 
-Sometimes we require new development client builds for testing. This action will trigger a new development client build when a new commit included `[need build]` in the commit message.
+Sometimes we need new development client builds for testing. This action will trigger a new development client build when a new commit included `[need build]` in the commit message.
 
 ```yaml
 ### build-ios.yml
