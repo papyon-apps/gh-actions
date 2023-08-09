@@ -30,13 +30,13 @@ jobs:
         uses: shioyang/check-pr-labels-on-push-action@v1.0.9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          labels: '["build-ios"]'
+          labels: '["build-android"]'
         timeout-minutes: 5
 
       - name: Check PR labels
         run: |
           echo "Result: ${{ steps.check_pr_labels.outputs.result }}"
-          if [[ "${{ steps.check_pr_labels.outputs.result }}" != "build-ios" ]]; then
+          if [[ "${{ steps.check_pr_labels.outputs.result }}" != "build-android" ]]; then
              echo "No labels found, exiting..."
              exit 0
            fi
@@ -60,7 +60,7 @@ jobs:
         run: yarn install
 
       - name: Build on EAS
-        run: npx eas-cli build --platform ios --non-interactive
+        run: npx eas-cli build --platform android --non-interactive
         if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
 
       - name: Commit and push version changes
@@ -98,5 +98,5 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Submit to Testflight
-        run: EXPO_APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }} npx eas-cli submit -p ios --latest --non-interactive
+      - name: Submit to Play Store
+        run: npx eas-cli submit -p android --latest --non-interactive
