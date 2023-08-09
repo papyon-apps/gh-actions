@@ -1,4 +1,4 @@
-name: Build & Release IOS
+name: Build & Release Android
 
 on:
   workflow_call:
@@ -11,14 +11,14 @@ on:
 jobs:
   check_pr_labels:
     runs-on: ubuntu-latest
-    name: Check `build-ios` PR label
+    name: Check `build-android` PR label
     steps:
       - name: Check PR labels action step
         id: check_pr_labels
         uses: shioyang/check-pr-labels-on-push-action@v1.0.9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          labels: '["build-ios"]'
+          labels: '["build-android"]'
         timeout-minutes: 5
 
   build:
