@@ -39,6 +39,6 @@ jobs:
         run: yarn install
 
       - name: Create preview
-        uses: expo/expo-github-action/preview@v8
+        uses: nderscore/expo-github-action/preview@workaround # TODO: replace original when issue fixes: https://github.com/expo/expo-github-action/issues/221
         with:
           command: eas update --branch development --message "${{ github.event.pull_request.title }}"
