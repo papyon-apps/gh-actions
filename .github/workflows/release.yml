@@ -38,7 +38,7 @@ jobs:
         run: yarn install
 
       - name: Build on EAS
-        run: cd ${{ github.event.inputs.working-directory }} && npx eas-cli build --platform all --non-interactive
+        run: cd ${{ inputs.working-directory }} && npx eas-cli build --platform all --non-interactive
         if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
 
       - name: Commit and push version changes
@@ -78,8 +78,8 @@ jobs:
 
       - name: Submit to Testflight
         run: EXPO_APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}\
-          cd ${{ github.event.inputs.working-directory }} &&
+          cd ${{ inputs.working-directory }} &&
           npx eas-cli submit -p ios --latest --non-interactive\
 
       - name: Submit to Play Store
-        run: cd ${{ github.event.inputs.working-directory }} && npx eas-cli submit -p android --latest --non-interactive
+        run: cd ${{ inputs.working-directory }} && npx eas-cli submit -p android --latest --non-interactive
