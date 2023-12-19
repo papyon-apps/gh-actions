@@ -18,6 +18,9 @@ jobs:
   build:
     name: Build & Versioning App
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -38,7 +41,7 @@ jobs:
         run: yarn install
 
       - name: Build on EAS
-        run: cd ${{ inputs.working-directory }} && npx eas-cli build --platform all --non-interactive
+        run: npx eas-cli build --platform all --non-interactive
         if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
 
       - name: Commit and push version changes
@@ -55,6 +58,9 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -77,9 +83,7 @@ jobs:
         run: yarn install
 
       - name: Submit to Testflight
-        run: EXPO_APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}\
-          cd ${{ inputs.working-directory }} &&
-          npx eas-cli submit -p ios --latest --non-interactive\
+        run: EXPO_APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }} npx eas-cli submit -p ios --latest --non-interactive\
 
       - name: Submit to Play Store
-        run: cd ${{ inputs.working-directory }} && npx eas-cli submit -p android --latest --non-interactive
+        run: npx eas-cli submit -p android --latest --non-interactive
