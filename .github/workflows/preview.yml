@@ -50,4 +50,4 @@ jobs:
         uses: nderscore/expo-github-action/preview@workaround # TODO: replace original when issue fixes: https://github.com/expo/expo-github-action/issues/221
         with:
           working-directory: ${{ inputs.working-directory }}
-          command: eas update --branch development --message "${{ github.event.pull_request.title }}"
+          command: eas update --branch development --message "${{ github.event.pull_request.title }}" --clear-cache
