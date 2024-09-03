@@ -1,0 +1,56 @@
+name: Release OTA Update
+
+on:
+  workflow_call:
+    secrets:
+      EXPO_TOKEN:
+        required: true
+
+# [OTA] is a keyword that will trigger the OTA release
+jobs:
+  check:
+    name: Check if OTA release is needed
+    runs-on: ubuntu-latest
+    outputs:
+      last_commit: ${{ steps.git.outputs.LAST_COMMIT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get last commit
+        id: git
+        shell: bash
+        run: |
+          message=$( git log --format=%B -n 1 --oneline ${{ github.event.pull_request.head.sha }})
+          echo 'LAST_COMMIT<<EOF' >> $GITHUB_OUTPUT
+          echo "$message" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+          echo "$message"
+
+  update:
+    name: Release OTA Update
+    needs: check
+    runs-on: ubuntu-latest
+    if: ${{ contains(needs.check.outputs.last_commit, '[OTA]') }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Release OTA Update
+        run: eas update --branch production --message "${{ needs.check.outputs.last_commit }}"
