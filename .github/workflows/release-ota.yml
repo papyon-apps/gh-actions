@@ -30,7 +30,7 @@ jobs:
         id: git
         shell: bash
         run: |
-          message=$( git log --format=%B -n 1 --oneline ${{ github.event.head_commit.sha }})
+          message=$( git log --format=%B -n 1 --oneline ${{ github.sha }} )
           echo 'LAST_COMMIT<<EOF' >> $GITHUB_OUTPUT
           echo "$message" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
