@@ -2,6 +2,12 @@ name: Release OTA Update
 
 on:
   workflow_call:
+    inputs:
+      working-directory:
+        description: "The working directory to run the command in"
+        required: false
+        default: "."
+        type: string
     secrets:
       EXPO_TOKEN:
         required: true
@@ -11,6 +17,9 @@ jobs:
   check:
     name: Check if OTA release is needed
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     outputs:
       last_commit: ${{ steps.git.outputs.LAST_COMMIT }}
     steps:
@@ -34,6 +43,10 @@ jobs:
     name: Release OTA Update
     needs: check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+        
     if: ${{ contains(needs.check.outputs.last_commit, '[OTA]') }}
 
     steps:
