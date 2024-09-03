@@ -43,7 +43,7 @@ jobs:
 
       - name: Build on EAS
         run: npx eas-cli build --platform all --non-interactive
-        if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
+        if: ${{ !contains(github.event.head_commit.message, '[skip build]') || !contains(github.event.head_commit.message, '[OTA]') }}
 
       - name: Commit and push version changes
         run: |
