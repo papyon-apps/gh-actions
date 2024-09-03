@@ -25,15 +25,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get last commit
         id: git
         shell: bash
         run: |
-          message=$( git log --format=%B -n 1 --oneline ${{ github.event.pull_request.head.sha }})
+          message=$( git log --format=%B -n 1 --oneline ${{ github.event.head_commit.message }})
           echo 'LAST_COMMIT<<EOF' >> $GITHUB_OUTPUT
           echo "$message" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
@@ -46,7 +43,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}
-        
+
     if: ${{ contains(needs.check.outputs.last_commit, '[OTA]') }}
 
     steps:
