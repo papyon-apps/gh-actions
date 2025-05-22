@@ -22,6 +22,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
+    timeout-minutes: 30
     steps:
       - name: Check for EXPO_TOKEN
         run: |
@@ -47,8 +48,13 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Clean yarn cache and node_modules
+        run: |
+          yarn cache clean
+          rm -rf node_modules
+
       - name: Install dependencies
-        run: yarn install
+        run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install
 
       - name: Create preview
         uses: nderscore/expo-github-action/preview@workaround # TODO: replace original when issue fixes: https://github.com/expo/expo-github-action/issues/221
