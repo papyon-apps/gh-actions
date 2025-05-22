@@ -47,8 +47,11 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Clean yarn cache
+        run: yarn cache clean
+
       - name: Install dependencies
-        run: yarn install
+        run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install
 
       - name: Create preview
         uses: nderscore/expo-github-action/preview@workaround # TODO: replace original when issue fixes: https://github.com/expo/expo-github-action/issues/221
