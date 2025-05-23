@@ -19,10 +19,7 @@ jobs:
     env:
       NODE_ENV: development
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
-    permissions:
-      pull-requests: write
-      contents: read
-    timeout-minutes: 30
+      
     steps:
       - name: Check for EXPO_TOKEN
         run: |
@@ -39,7 +36,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: yarn
 
       - name: Setup EAS
@@ -48,13 +45,8 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Clean yarn cache and node_modules
-        run: |
-          yarn cache clean
-          rm -rf node_modules
-
       - name: Install dependencies
-        run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install
+        run: yarn install
 
       - name: Create preview
         uses: nderscore/expo-github-action/preview@workaround # TODO: replace original when issue fixes: https://github.com/expo/expo-github-action/issues/221
